@@ -39,7 +39,7 @@ def make_logfiles(root = "./log"):
             suspensionHeight1,suspensionHeight2,suspensionHeight3,suspensionHeight4,\
             carPositionNormalized,carSlope,carCoordinatesX,carCoordinatesY,carCoordinatesZ"
         
-        raw_file.write(var_names + "\n")
+        parsed_file.write(var_names + "\n")
     else:
         raw_file = open(raw_path, "a")
         parsed_file = open(parsed_path, "a")
