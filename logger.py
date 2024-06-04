@@ -27,17 +27,18 @@ def make_logfiles(root = "./log"):
         raw_file = open(raw_path, "w")
         parsed_file = open(parsed_path, "w")
         
-        var_names = "time,speedKmh,speedMph,speedMs,\
-            isAbsEnabled,isAbsInAction,isTcInAction,isTcEnabled,isInPit,isEngineLimiterOn,\
-            accGVertical,accGHorizontal,accGFrontal,lapTime,lastLap,bestLap,lapCount,gas,brake,clutch,engineRPM,steer,gear,cgHeight,\
-            wheelAngularSpeed1,wheelAngularSpeed2,wheelAngularSpeed3,wheelAngularSpeed4, slipAngle1,slipAngle2,slipAngle3,slipAngle4,\
-            slipAngleContactPatch1,slipAngleContactPatch2,slipAngleContactPatch3,slipAngleContactPatch4,\
-            slipRatio1,slipRatio2,slipRatio3,slipRatio4,tyreSlip1,tyreSlip2,tyreSlip3,tyreSlip4,ndSlip1,ndSlip2,ndSlip3,ndSlip4,\
-            load1,load2,load3,load4,Dy1,Dy2,Dy3,Dy4,Mz1,Mz2,Mz3,Mz4,tyreDirtyLevel1,tyreDirtyLevel2,tyreDirtyLevel3,tyreDirtyLevel4,\
-            camberRAD1,camberRAD2,camberRAD3,camberRAD4,tyreRadius1,tyreRadius2,tyreRadius3,tyreRadius4,\
-            tyreLoadedRadius1,tyreLoadedRadius2,tyreLoadedRadius3,tyreLoadedRadius4,\
-            suspensionHeight1,suspensionHeight2,suspensionHeight3,suspensionHeight4,\
-            carPositionNormalized,carSlope,carCoordinatesX,carCoordinatesY,carCoordinatesZ"
+        var_names = "time,speedKmh,speedMph,speedMs,"\
+            "isAbsEnabled,isAbsInAction,isTcInAction,isTcEnabled,isInPit,isEngineLimiterOn,"\
+            "accGVertical,accGHorizontal,accGFrontal,lapTime,lastLap,bestLap,lapCount,gas,brake,clutch,engineRPM,steer,gear,cgHeight,"\
+            "wheelAngularSpeed1,wheelAngularSpeed2,wheelAngularSpeed3,wheelAngularSpeed4, slipAngle1,slipAngle2,slipAngle3,slipAngle4,"\
+            "slipAngleContactPatch1,slipAngleContactPatch2,slipAngleContactPatch3,slipAngleContactPatch4,"\
+            "slipRatio1,slipRatio2,slipRatio3,slipRatio4,tyreSlip1,tyreSlip2,tyreSlip3,tyreSlip4,ndSlip1,ndSlip2,ndSlip3,ndSlip4,"\
+            "load1,load2,load3,load4,Dy1,Dy2,Dy3,Dy4,Mz1,Mz2,Mz3,Mz4,tyreDirtyLevel1,tyreDirtyLevel2,tyreDirtyLevel3,tyreDirtyLevel4,"\
+            "camberRAD1,camberRAD2,camberRAD3,camberRAD4,tyreRadius1,tyreRadius2,tyreRadius3,tyreRadius4,"\
+            "tyreLoadedRadius1,tyreLoadedRadius2,tyreLoadedRadius3,tyreLoadedRadius4,"\
+            "suspensionHeight1,suspensionHeight2,suspensionHeight3,suspensionHeight4,"\
+            "carPositionNormalized,carSlope,carCoordinatesX,carCoordinatesY,carCoordinatesZ"
+
         
         parsed_file.write(var_names + "\n")
     else:
