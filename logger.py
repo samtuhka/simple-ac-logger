@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 def make_logfiles(root = "./log"):
     now = datetime.now()
-    folder = now.strftime("%d-%m-%Y-%H-%M")
+    folder = now.strftime("%d-%m-%Y--%H-%M-%S-%f")
 
     directory = os.path.join(root, folder)
     raw_path = os.path.join(directory, "raw.csv")
@@ -148,12 +148,10 @@ def run(ip_address = '127.0.0.1', port = 9996):
 
             ret, parsed = parse_message(msg)
             if ret:
-                parsed_f.write(f"{ts},{parsed}\n")
-                
+                parsed_f.write(f"{ts},{parsed}\n")          
         except KeyboardInterrupt:
             ac.stop()
-            return
-            
+            break          
         except Exception as e:
             logging.error(e)
             logging.info("Restarting everything")
