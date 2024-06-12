@@ -67,13 +67,13 @@ def parse_message(msg):
     if size == 328:        
         msg_fmt = '< 8x 3f 6b 2x 3f 4i 5f i f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f f f 3f'
         parsed_msg = struct.unpack(msg_fmt, msg)
-        return 328, parsed_msg
+        return size, parsed_msg
     elif size == 408:
         msg_fmt = '< 100s 100s 2i 100s 100s'
         parsed_msg = struct.unpack(msg_fmt, msg)
         decode = lambda x: x.decode('utf-16', errors='ignore').split("%")[0] if type(x) == bytes else x
         parsed_msg = tuple(decode, parsed_msg))
-        return 408, parsed_msg    
+        return size, parsed_msg    
     else:
         logging.info(f"Unexpected msg size at: {size} (expected 328)")
         return 0, None     
