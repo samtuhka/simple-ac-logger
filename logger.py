@@ -6,6 +6,8 @@ import struct
 import sys
 import os
 import logging
+import json
+
 
 from base64 import b64encode
 from threading import Thread
@@ -13,19 +15,32 @@ from datetime import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
-def make_logfiles(root = "./log"):
+def make_logfiles(root = "./log", info = ""):
     now = datetime.now()
     folder = now.strftime("%d-%m-%Y--%H-%M-%S-%f")
 
     directory = os.path.join(root, folder)
     raw_path = os.path.join(directory, "raw.csv")
     parsed_path = os.path.join(directory, "parsed.csv")
-
+    
+    info_path = os.path.join(directory, "info.json")
     
     if not os.path.exists(directory):
         os.makedirs(directory)
         raw_file = open(raw_path, "w")
         parsed_file = open(parsed_path, "w")
+        
+        if len(info) > 0:
+            _, parsed = parse_message(info)  
+            
+            info_file = open(info_path, "w")
+            log_ts = time.time()
+
+            r = b64encode(info)
+            info_string = b64encode(info).decode('utf-8')
+
+            info_dict = {"log_ts": log_ts, "car":parsed[0], "user": parsed[1], "identifier": parsed[2], "version": parsed[3], "track": parsed[4], "track_config": parsed[5], "raw_info": info_string}
+            json.dump(info_dict, info_file)
         
         var_names = "time,speedKmh,speedMph,speedMs,"\
             "isAbsEnabled,isAbsInAction,isTcInAction,isTcEnabled,isInPit,isEngineLimiterOn,"\
@@ -47,14 +62,18 @@ def make_logfiles(root = "./log"):
 
     return raw_file, parsed_file
     
-    
 def parse_message(msg):
     size = len(msg)
     if size == 328:        
         msg_fmt = '< 8x 3f 6b 2x 3f 4i 5f i f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f f f 3f'
         parsed_msg = struct.unpack(msg_fmt, msg)
-        parsed_msg = ",".join(map(str, parsed_msg))
         return True, parsed_msg
+    elif size == 408:
+        msg_fmt = '< 100s 100s 2i 100s 100s'
+        parsed_msg = struct.unpack(msg_fmt, msg)
+        rate = lambda x: x.decode('utf-16', errors='ignore').split("%")[0] if type(x) == bytes else x
+        parsed_msg = tuple(map(rate, parsed_msg))
+        return False, parsed_msg    
     else:
         logging.info(f"Unexpected msg size at: {size} (expected 328)")
         return False, None     
@@ -127,16 +146,8 @@ def run(ip_address = '127.0.0.1', port = 9996):
     ac = AC_Socket(ip_address, port)
     ac.start()
     
-    raw_f, parsed_f = make_logfiles()
-    
-    log_ts = time.time()
-
-    if len(ac.info) == 408:
-        r = b64encode(ac.info)
-        info_string = b64encode(ac.info).decode('utf-8')
-
-        raw_f.write(f"{log_ts},{info_string}\n")
-    
+    raw_f, parsed_f = make_logfiles(info = ac.info)
+        
     while True:
         try:
             ts = time.time()
@@ -147,6 +158,8 @@ def run(ip_address = '127.0.0.1', port = 9996):
             raw_f.write(f"{ts},{msg_string}\n")
 
             ret, parsed = parse_message(msg)
+            parsed = ",".join(map(str, parsed))
+
             if ret:
                 parsed_f.write(f"{ts},{parsed}\n")          
         except KeyboardInterrupt:
