@@ -75,7 +75,7 @@ def parse_message(msg):
         parsed_msg = tuple(decode, parsed_msg))
         return size, parsed_msg    
     else:
-        logging.info(f"Unexpected msg size at: {size} (expected 328)")
+        logging.info(f"Unexpected msg size at: {size} (expected 328 or 408)")
         return 0, None     
 
 class AC_Socket():
