@@ -67,16 +67,16 @@ def parse_message(msg):
     if size == 328:        
         msg_fmt = '< 8x 3f 6b 2x 3f 4i 5f i f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f 4f f f 3f'
         parsed_msg = struct.unpack(msg_fmt, msg)
-        return True, parsed_msg
+        return 328, parsed_msg
     elif size == 408:
         msg_fmt = '< 100s 100s 2i 100s 100s'
         parsed_msg = struct.unpack(msg_fmt, msg)
         decode = lambda x: x.decode('utf-16', errors='ignore').split("%")[0] if type(x) == bytes else x
         parsed_msg = tuple(decode, parsed_msg))
-        return False, parsed_msg    
+        return 408, parsed_msg    
     else:
         logging.info(f"Unexpected msg size at: {size} (expected 328)")
-        return False, None     
+        return 0, None     
 
 class AC_Socket():
 
@@ -157,10 +157,10 @@ def run(ip_address = '127.0.0.1', port = 9996):
             msg_string = b64encode(msg).decode('utf-8')
             raw_f.write(f"{ts},{msg_string}\n")
 
-            ret, parsed = parse_message(msg)
-            parsed = ",".join(map(str, parsed))
+            size, parsed = parse_message(msg)
 
-            if ret:
+            if size == 328:
+                parsed = ",".join(map(str, parsed))
                 parsed_f.write(f"{ts},{parsed}\n")          
         except KeyboardInterrupt:
             ac.stop()
