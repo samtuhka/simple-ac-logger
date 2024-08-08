@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 def make_logfiles(root = "./log", info = ""):
     now = datetime.now()
-    folder = now.strftime("%d-%m-%Y--%H-%M-%S-%f")
+    folder = now.isoformat()
 
     directory = os.path.join(root, folder)
     raw_path = os.path.join(directory, "raw.csv")
