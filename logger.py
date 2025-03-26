@@ -17,7 +17,8 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 def make_logfiles(root = "./log", info = ""):
     now = datetime.now()
-    folder = now.strftime("%Y_%m_%d_%H_%M_%S_%f")
+    folder = now.strftime("%Y-%m-%d--%H-%M-%S")
+    folder = "AC_Logger_" + folder + f"_{time.time()}"
 
     directory = os.path.join(root, folder)
     raw_path = os.path.join(directory, "raw.csv")
@@ -42,7 +43,7 @@ def make_logfiles(root = "./log", info = ""):
             info_dict = {"log_ts": log_ts, "car":parsed[0], "user": parsed[1], "identifier": parsed[2], "version": parsed[3], "track": parsed[4], "track_config": parsed[5], "raw_info": info_string}
             json.dump(info_dict, info_file)
         
-        var_names = "time,speedKmh,speedMph,speedMs,"\
+        var_names = "time,sessionTime,speedKmh,speedMph,speedMs,"\
             "isAbsEnabled,isAbsInAction,isTcInAction,isTcEnabled,isInPit,isEngineLimiterOn,"\
             "accGVertical,accGHorizontal,accGFrontal,lapTime,lastLap,bestLap,lapCount,gas,brake,clutch,engineRPM,steer,gear,cgHeight,"\
             "wheelAngularSpeed1,wheelAngularSpeed2,wheelAngularSpeed3,wheelAngularSpeed4, slipAngle1,slipAngle2,slipAngle3,slipAngle4,"\
@@ -147,21 +148,23 @@ def run(ip_address = '127.0.0.1', port = 9996):
     ac.start()
     
     raw_f, parsed_f = make_logfiles(info = ac.info)
+    time_start = time.perf_counter()
         
     while True:
         try:
             ts = time.time()
+            session_time = time.perf_counter() - time_start
         
             msg, rinfo = ac.socket.recvfrom(1024)
             
             msg_string = b64encode(msg).decode('utf-8')
-            raw_f.write(f"{ts},{msg_string}\n")
+            raw_f.write(f"{ts},{session_time},{msg_string}\n")
 
             size, parsed = parse_message(msg)
 
             if size == 328:
                 parsed = ",".join(map(str, parsed))
-                parsed_f.write(f"{ts},{parsed}\n")          
+                parsed_f.write(f"{ts},{session_time},{parsed}\n")          
         except KeyboardInterrupt:
             ac.stop()
             break          
